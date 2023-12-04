@@ -1,0 +1,56 @@
+(* Converts a string to a list of chars *)
+let explode str =
+  let rec explode_inner cur_index chars =
+    if cur_index < String.length str then
+      let new_char = str.[cur_index] in
+      explode_inner (cur_index + 1) (chars @ [ new_char ])
+    else chars
+  in
+  explode_inner 0 []
+
+let _char_is_next_to_symbol _char_list_list _i _j = true
+let print_bool b = if b then print_endline "true" else print_endline "false"
+
+let rec parcourir_lignes char_list_list line_nbr =
+  let rec go_through_line line length line_nbr =
+    match line with
+    | [] -> ()
+    | x :: xs ->
+        (* traitement de l'élément x *)
+        let posi = length - List.length xs - 1 in
+        Printf.printf "pos de '%c': %d %d" x line_nbr posi;
+        print_bool (traiter_voisins (line_nbr, posi));
+        go_through_line xs length line_nbr
+  and traiter_voisins (x, y) =
+    let row = List.nth char_list_list x in
+    let item = List.nth row y in
+    Printf.printf "  -> %c" item;
+    true
+  in
+
+  match char_list_list with
+  | [] -> ()
+  | ligne :: autre_ligne ->
+      let line_length = List.length ligne in
+      go_through_line ligne line_length line_nbr;
+      print_char '\n';
+      parcourir_lignes autre_ligne (line_nbr + 1)
+
+let part_1 input =
+  let lines = String.split_on_char '\n' input in
+  let lines = List.map explode lines in
+  let () = parcourir_lignes lines 0 in
+  [ 1; 2 ]
+
+let read_whole_file filename =
+  let channel = open_in_bin filename in
+  let s = really_input_string channel (in_channel_length channel) in
+  close_in channel;
+  s
+
+let rec sum s = match s with [] -> 0 | x :: t -> x + sum t
+
+let () =
+  if Array.length Sys.argv != 2 then
+    Printf.eprintf "Error: not enought or too many arguments: file path needed"
+  else print_int (sum (part_1 (read_whole_file Sys.argv.(1))))

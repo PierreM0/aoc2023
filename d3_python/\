@@ -1,0 +1,11 @@
+with open('input_test.txt') as f:
+    str = f.read();
+
+    lines = str.split('\n')
+    aux = []
+    print(lines);
+    for line in lines:
+        aux.append(split(line))
+    
+    print(aux);
+
